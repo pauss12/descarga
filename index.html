@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Descarga Automática con Barra de Carga</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden; /* Evita scrollbars si el overlay lo provoca */
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px; /* Aumentado para mejor visualización */
+            width: 100%;
+            display: none; /* Oculta el contenido principal si quieres que solo se vea la carga al inicio */
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85); /* Fondo más oscuro para el inicio */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5em;
+            z-index: 1000;
+            opacity: 1; /* Empieza visible */
+            visibility: visible;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 25px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress Bar Styles */
+        .progress-bar-container {
+            width: 80%;
+            max-width: 400px; /* Ancho máximo para la barra */
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 25px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 30px; /* Un poco más alta */
+            background-color: #28a745;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-size: 1em;
+            font-weight: bold;
+            transition: width 0.8s ease-out; /* Animación más suave */
+        }
+
+        .small-text {
+            font-size: 0.9em;
+            margin-top: 25px;
+            text-align: center;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loadingMessage">Iniciando descarga automáticamente...</p>
+        <div class="progress-bar-container">
+            <div id="progressBarFill" class="progress-bar-fill">0%</div>
+        </div>
+        <p class="small-text">
+            Si la descarga no comienza automáticamente, es posible que tu navegador la haya bloqueado.
+            Por favor, revisa tus notificaciones o <br> <a href="https://drive.google.com/uc?export=download&id=TU_ID_DE_ARCHIVO_DE_DRIVE" download="MiArchivo.pdf" style="color: #61dafb; text-decoration: underline;">haz clic aquí para iniciarla manualmente.</a>
+        </p>
+    </div>
+
+    <div class="container" id="mainContent">
+        <h1>¡Descarga Completada!</h1>
+        <p>Tu archivo debería haberse descargado. Si tienes algún problema, contáctanos.</p>
+        <a href="https://drive.google.com/uc?export=download&id=TU_ID_DE_ARCHIVO_DE_DRIVE" download="MiArchivo.pdf" class="download-button">
+            Descargar de Nuevo (por si acaso)
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const progressBarFill = document.getElementById('progressBarFill');
+            const mainContent = document.getElementById('mainContent'); // Referencia al contenedor principal
+
+            // 1. Mostrar la barra de carga (ya está visible por defecto en CSS)
+            // No se necesita `loadingOverlay.classList.add('visible');` aquí.
+            loadingMessage.textContent = "Preparando tu descarga...";
+            progressBarFill.style.width = '0%';
+            progressBarFill.textContent = '0%';
+
+            // 2. Simular el progreso de la barra (esto no es el progreso real de la descarga)
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5; // Simulación más lenta
+                if (progress <= 100) {
+                    progressBarFill.style.width = progress + '%';
+                    progressBarFill.textContent = progress + '%';
+                } else {
+                    clearInterval(progressInterval);
+                }
+            }, 100); // Actualiza la barra más frecuentemente para una simulación más suave
+
+            // 3. Disparar la descarga después de un breve retraso para que la barra de carga sea visible
+            // Reemplaza 'TU_ID_DE_ARCHIVO_DE_DRIVE' con el ID real de tu archivo de Google Drive
+            const fileId = '1234567890abcdefghijklmnopqrstuvwxyz'; // <--- ¡IMPORTANTE! Reemplaza esto con tu ID real
+            const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            const fileName = 'MiDocumentoImportante.pdf'; // Nombre deseado para el archivo
+
+            setTimeout(() => {
+                const downloadLink = document.createElement('a');
+                downloadLink.href = driveDownloadUrl;
+                downloadLink.download = fileName;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                console.log('Intento de descarga automática iniciado.');
+
+                // 4. Actualizar el mensaje y ocultar la barra de carga
+                clearInterval(progressInterval); // Detener la simulación de progreso
+                progressBarFill.style.width = '100%';
+                progressBarFill.textContent = '100%';
+                loadingMessage.textContent = "Descarga iniciada. Revisa tus descargas.";
+
+                // Ocultar el overlay después de un retraso adicional
+                setTimeout(() => {
+                    loadingOverlay.classList.remove('visible'); // Esto hace que el overlay se desvanezca
+                    // Si quieres que el contenido principal aparezca:
+                    // mainContent.style.display = 'block'; // O 'flex', 'grid', etc. según tu diseño
+                }, 2000); // Muestra el mensaje final por 2 segundos antes de desaparecer
+            }, 1500); // Inicia la descarga después de 1.5 segundos de barra de carga
+        });
+    </script>
+
+</body>
+</html>
