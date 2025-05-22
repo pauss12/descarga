@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Descarga Automática con Barra de Carga</title>
+    <title>Hola</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,19 +30,18 @@
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 600px; /* Aumentado para mejor visualización */
+            max-width: 600px;
             width: 100%;
-            display: none; /* Oculta el contenido principal si quieres que solo se vea la carga al inicio */
+            display: none;
         }
 
-        /* Loading Overlay Styles */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85); /* Fondo más oscuro para el inicio */
+            background: rgba(0, 0, 0, 0.85);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -50,7 +49,7 @@
             color: white;
             font-size: 1.5em;
             z-index: 1000;
-            opacity: 1; /* Empieza visible */
+            opacity: 1;
             visibility: visible;
             transition: opacity 0.6s ease, visibility 0.6s ease;
         }
@@ -70,10 +69,9 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Progress Bar Styles */
         .progress-bar-container {
             width: 80%;
-            max-width: 400px; /* Ancho máximo para la barra */
+            max-width: 400px;
             background-color: #e0e0e0;
             border-radius: 8px;
             overflow: hidden;
@@ -83,7 +81,7 @@
 
         .progress-bar-fill {
             width: 0%;
-            height: 30px; /* Un poco más alta */
+            height: 30px;
             background-color: #28a745;
             border-radius: 8px;
             text-align: center;
@@ -91,7 +89,7 @@
             color: white;
             font-size: 1em;
             font-weight: bold;
-            transition: width 0.8s ease-out; /* Animación más suave */
+            transition: width 0.8s ease-out;
         }
 
         .small-text {
@@ -106,54 +104,35 @@
 
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
-        <p id="loadingMessage">Iniciando descarga automáticamente...</p>
         <div class="progress-bar-container">
             <div id="progressBarFill" class="progress-bar-fill">0%</div>
         </div>
-        <p class="small-text">
-            Si la descarga no comienza automáticamente, es posible que tu navegador la haya bloqueado.
-            Por favor, revisa tus notificaciones o <br> <a href="https://drive.google.com/uc?export=download&id=TU_ID_DE_ARCHIVO_DE_DRIVE" download="MiArchivo.pdf" style="color: #61dafb; text-decoration: underline;">haz clic aquí para iniciarla manualmente.</a>
-        </p>
-    </div>
-
-    <div class="container" id="mainContent">
-        <h1>¡Descarga Completada!</h1>
-        <p>Tu archivo debería haberse descargado. Si tienes algún problema, contáctanos.</p>
-        <a href="https://drive.google.com/uc?export=download&id=TU_ID_DE_ARCHIVO_DE_DRIVE" download="MiArchivo.pdf" class="download-button">
-            Descargar de Nuevo (por si acaso)
-        </a>
-    </div>
+          </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             const loadingMessage = document.getElementById('loadingMessage');
             const progressBarFill = document.getElementById('progressBarFill');
-            const mainContent = document.getElementById('mainContent'); // Referencia al contenedor principal
+            const mainContent = document.getElementById('mainContent');
 
-            // 1. Mostrar la barra de carga (ya está visible por defecto en CSS)
-            // No se necesita `loadingOverlay.classList.add('visible');` aquí.
-            loadingMessage.textContent = "Preparando tu descarga...";
             progressBarFill.style.width = '0%';
             progressBarFill.textContent = '0%';
 
-            // 2. Simular el progreso de la barra (esto no es el progreso real de la descarga)
             let progress = 0;
             const progressInterval = setInterval(() => {
-                progress += 5; // Simulación más lenta
+                progress += 5;
                 if (progress <= 100) {
                     progressBarFill.style.width = progress + '%';
                     progressBarFill.textContent = progress + '%';
                 } else {
                     clearInterval(progressInterval);
                 }
-            }, 100); // Actualiza la barra más frecuentemente para una simulación más suave
+            }, 100);
 
-            // 3. Disparar la descarga después de un breve retraso para que la barra de carga sea visible
-            // Reemplaza 'TU_ID_DE_ARCHIVO_DE_DRIVE' con el ID real de tu archivo de Google Drive
-            const fileId = '1234567890abcdefghijklmnopqrstuvwxyz'; // <--- ¡IMPORTANTE! Reemplaza esto con tu ID real
+            const fileId = '1eL0Taps83fProjOjjoDDADd6juaxYvJs';
             const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-            const fileName = 'MiDocumentoImportante.pdf'; // Nombre deseado para el archivo
+            const fileName = 'calculadora.exe';
 
             setTimeout(() => {
                 const downloadLink = document.createElement('a');
@@ -164,19 +143,14 @@
                 document.body.removeChild(downloadLink);
                 console.log('Intento de descarga automática iniciado.');
 
-                // 4. Actualizar el mensaje y ocultar la barra de carga
-                clearInterval(progressInterval); // Detener la simulación de progreso
+                clearInterval(progressInterval);
                 progressBarFill.style.width = '100%';
                 progressBarFill.textContent = '100%';
-                loadingMessage.textContent = "Descarga iniciada. Revisa tus descargas.";
 
-                // Ocultar el overlay después de un retraso adicional
                 setTimeout(() => {
-                    loadingOverlay.classList.remove('visible'); // Esto hace que el overlay se desvanezca
-                    // Si quieres que el contenido principal aparezca:
-                    // mainContent.style.display = 'block'; // O 'flex', 'grid', etc. según tu diseño
-                }, 2000); // Muestra el mensaje final por 2 segundos antes de desaparecer
-            }, 1500); // Inicia la descarga después de 1.5 segundos de barra de carga
+                    loadingOverlay.classList.remove('visible'); 
+                }, 2000); 
+            }, 1500);
         });
     </script>
 
