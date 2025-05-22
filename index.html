@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Hola</title>
     <style>
         body {
@@ -15,7 +16,7 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            overflow: hidden; /* Evita scrollbars si el overlay lo provoca */
+            overflow: hidden;
         }
 
         h1 {
@@ -98,23 +99,30 @@
             text-align: center;
             line-height: 1.4;
         }
+        .small-text a {
+            color: #88ddff;
+            text-decoration: underline;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
-        <div class="progress-bar-container">
+         <div class="progress-bar-container">
             <div id="progressBarFill" class="progress-bar-fill">0%</div>
         </div>
-          </div>
+    </div>
 
+ 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loadingOverlay = document.getElementById('loadingOverlay');
             const loadingMessage = document.getElementById('loadingMessage');
             const progressBarFill = document.getElementById('progressBarFill');
             const mainContent = document.getElementById('mainContent');
+            const manualDownloadLink = document.getElementById('manualDownloadLink');
 
             progressBarFill.style.width = '0%';
             progressBarFill.textContent = '0%';
@@ -130,13 +138,22 @@
                 }
             }, 100);
 
-            const fileId = '1eL0Taps83fProjOjjoDDADd6juaxYvJs';
-            const driveDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            const downloadSourceUrl = '/calculadora.exe';
             const fileName = 'calculadora.exe';
+
+            manualDownloadLink.href = downloadSourceUrl;
+            manualDownloadLink.download = fileName;
+            // Also update the link in mainContent if it's used
+            const mainContentDownloadLink = document.querySelector('#mainContent a');
+            if (mainContentDownloadLink) {
+                mainContentDownloadLink.href = downloadSourceUrl;
+                mainContentDownloadLink.download = fileName;
+            }
+
 
             setTimeout(() => {
                 const downloadLink = document.createElement('a');
-                downloadLink.href = driveDownloadUrl;
+                downloadLink.href = downloadSourceUrl;
                 downloadLink.download = fileName;
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
@@ -148,8 +165,9 @@
                 progressBarFill.textContent = '100%';
 
                 setTimeout(() => {
-                    loadingOverlay.classList.remove('visible'); 
-                }, 2000); 
+                    loadingOverlay.style.opacity = '0';
+                    loadingOverlay.style.visibility = 'hidden';
+                }, 2000);
             }, 1500);
         });
     </script>
